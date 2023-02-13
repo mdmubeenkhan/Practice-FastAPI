@@ -4,12 +4,12 @@ from sqlalchemy.orm import Session
 from typing import List
 
 
-router = APIRouter()
+router = APIRouter(tags=["Blogs"])
 get_db = database.get_db
 
 
 
-@router.post("/blog", status_code=status.HTTP_201_CREATED, tags=["Blogs"])
+@router.post("/blog", status_code=status.HTTP_201_CREATED)
 def create(request: schemas.Blog, db:Session=Depends(get_db)):
     new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
@@ -18,7 +18,7 @@ def create(request: schemas.Blog, db:Session=Depends(get_db)):
     return new_blog
 
 
-@router.post("/blog-with-user-id", status_code=status.HTTP_201_CREATED, tags=["Blogs"])
+@router.post("/blog-with-user-id", status_code=status.HTTP_201_CREATED)
 def create(request: schemas.Blog_User_Id, db:Session=Depends(get_db)):
     new_blog = models.Blog(title=request.title, body=request.body, user_id=request.user_id)
     db.add(new_blog)
@@ -28,31 +28,31 @@ def create(request: schemas.Blog_User_Id, db:Session=Depends(get_db)):
 
 
 #this displays all field values (id, title, body)
-@router.get("/blogs", tags=["Blogs"])
+@router.get("/blogs")
 def get_all_blogs(db:Session=Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 #this displays only (title, body)
-@router.get("/blog", response_model=List[schemas.ShowBlog], tags=["Blogs"])
+@router.get("/blog", response_model=List[schemas.ShowBlog])
 def get_all_blogs(db:Session=Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 #this displays only (title)
-@router.get("/blog-title", response_model=List[schemas.ShowTitle], tags=["Blogs"])
+@router.get("/blog-title", response_model=List[schemas.ShowTitle])
 def get_all_blogs(db:Session=Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 #this displays only (title, body)
-@router.get("/blog-body", response_model=List[schemas.ShowBody], tags=["Blogs"])
+@router.get("/blog-body", response_model=List[schemas.ShowBody])
 def get_all_blogs(db:Session=Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 #this displays only particular blog
-@router.get("/blog/{id}", status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog, tags=["Blogs"])
+@router.get("/blog/{id}", status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def get_particular_blog(id, db:Session=Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==id).first()
     if not blog:
@@ -60,7 +60,7 @@ def get_particular_blog(id, db:Session=Depends(get_db)):
     return blog
 
 #this deletes a particular blog
-@router.delete("/blog/{id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Blogs"])
+@router.delete("/blog/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete(id, db:Session=Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==id)
     if not blog:
@@ -71,7 +71,7 @@ def delete(id, db:Session=Depends(get_db)):
     return {"detail": f"Blog with id = {id} is deleted."}    
 
 #this deletes a particular blog
-@router.put("/blog/{id}", status_code=status.HTTP_202_ACCEPTED, tags=["Blogs"])
+@router.put("/blog/{id}", status_code=status.HTTP_202_ACCEPTED)
 def update(id, request:schemas.Blog, db:Session=Depends(get_db)):
     print(f"Mubeen = {dict(request)}=.")
     blog = db.query(models.Blog).filter(models.Blog.id==id)
@@ -83,7 +83,7 @@ def update(id, request:schemas.Blog, db:Session=Depends(get_db)):
 
 
 #this displays blogs of given user
-@router.get("/blog-with-user-detail/{id}", status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog_Relationship, tags=["Blogs"])
+@router.get("/blog-with-user-detail/{id}", status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog_Relationship)
 def get_particular_blog(id, db:Session=Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==id).first()
     if not blog:
