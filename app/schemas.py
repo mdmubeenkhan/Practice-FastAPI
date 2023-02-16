@@ -35,6 +35,7 @@ class ShowUser(BaseModel):
     class Config():
         orm_mode = True
 
+
 # this will display only (body)
 class ShowBlog_Relationship(BaseModel):
     title:str
